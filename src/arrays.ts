@@ -8,10 +8,7 @@ export function bookEndList(numbers: number[]): number[] {
     if (numbers.length === 0) {
         return [];
     }
-    let newList: number[] = [];
-    newList.push(numbers[0]);
-    newList.push(numbers[numbers.length - 1]);
-    return newList;
+    return [numbers[0], numbers[numbers.length - 1]];
 }
 
 /**
@@ -19,11 +16,7 @@ export function bookEndList(numbers: number[]): number[] {
  * number has been tripled (multiplied by 3).
  */
 export function tripleNumbers(numbers: number[]): number[] {
-    let tripledList: number[] = [];
-    for (let i = 0; i < numbers.length; i++) {
-        tripledList.push(numbers[i] * 3);
-    }
-    return tripledList;
+    return numbers.map((num) => num * 3);
 }
 
 /**
@@ -31,15 +24,13 @@ export function tripleNumbers(numbers: number[]): number[] {
  * the number cannot be parsed as an integer, convert it to 0 instead.
  */
 export function stringsToIntegers(numbers: string[]): number[] {
-    let numbersList: number[] = [];
-    for (let i = 0; i < numbers.length; i++) {
-        if (parseInt(numbers[i], 10)) {
-            numbersList.push(parseInt(numbers[i], 10));
-        } else {
-            numbersList.push(0);
+    return numbers.map((num) => {
+        const parsed = parseInt(num, 10);
+        if (isNaN(parsed)) {
+            return 0;
         }
-    }
-    return numbersList;
+        return parsed;
+    });
 }
 
 /**
@@ -50,21 +41,18 @@ export function stringsToIntegers(numbers: string[]): number[] {
  */
 // Remember, you can write functions as lambdas too! They work exactly the same.
 export const removeDollars = (amounts: string[]): number[] => {
-    if (amounts.length === 0) {
-        return [];
-    }
-    let numbersList: number[] = [];
-    for (let i = 0; i < amounts.length; i++) {
-        let value = amounts[i];
-
+    return amounts.map((amount) => {
+        let value = amount;
         if (value[0] === "$") {
             value = value.slice(1);
         }
 
         let parsedNumber = parseInt(value, 10);
-        numbersList.push(isNaN(parsedNumber) ? 0 : parsedNumber);
-    }
-    return numbersList;
+        if (isNaN(parsedNumber)) {
+            return 0;
+        }
+        return parsedNumber;
+    });
 };
 
 /**
@@ -73,15 +61,16 @@ export const removeDollars = (amounts: string[]): number[] => {
  * in question marks ("?").
  */
 export const shoutIfExclaiming = (messages: string[]): string[] => {
-    let shoutingList: string[] = [];
-    for (let i = 0; i < messages.length; i++) {
-        if (messages[i][messages[i].length - 1] === "!") {
-            shoutingList.push(messages[i].toUpperCase());
-        } else if (messages[i][messages[i].length - 1] !== "?") {
-            shoutingList.push(messages[i]);
-        }
-    }
-    return shoutingList;
+    return messages
+        .filter((msg) => {
+            return msg[msg.length - 1] !== "?";
+        })
+        .map((msg) => {
+            if (msg[msg.length - 1] === "!") {
+                return msg.toUpperCase();
+            }
+            return msg;
+        });
 };
 
 /**
@@ -161,32 +150,19 @@ export function injectPositive(values: number[]): number[] {
     if (values.length === 0) {
         return [0];
     }
-    let sumPosList: number[] = [];
-    let firstNegative: boolean = true;
+
     let posSum: number = 0;
+    let firstNegative: boolean = true;
     let index: number = 0;
-    while (values[index] >= 0) {
+
+    while (index < values.length && values[index] >= 0) {
         posSum += values[index];
         index++;
     }
 
-    for (let i = 0; i < values.length; i++) {
-        if (values[i] >= 0) {
-            if (i === values.length - 1 && firstNegative) {
-                sumPosList.push(values[i]);
-                sumPosList.push(posSum);
-            } else {
-                sumPosList.push(values[i]);
-            }
-        } else if (values[i] < 0) {
-            if (firstNegative) {
-                sumPosList.push(values[i]);
-                sumPosList.push(posSum);
-                firstNegative = false;
-            } else {
-                sumPosList.push(values[i]);
-            }
-        }
+    if (index === values.length) {
+        return [...values, posSum];
     }
-    return sumPosList;
+
+    return [...values.slice(0, index + 1), posSum, ...values.slice(index + 1)];
 }
