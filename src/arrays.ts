@@ -152,7 +152,6 @@ export function injectPositive(values: number[]): number[] {
     }
 
     let posSum: number = 0;
-    let firstNegative: boolean = true;
     let index: number = 0;
 
     while (index < values.length && values[index] >= 0) {
